@@ -1,218 +1,268 @@
+:root {
+  --bg-main: #f3f7fb;
+  --surface: #ffffff;
+  --surface-alt: #f8fafc;
+  --primary-blue: #7bb5e8;
+  --primary-hover: #68a4dc;
+  --primary-soft: #eaf3fb;
+  --primary-dark: #1b324d;
+  --text-main: #243342;
+  --text-muted: #627487;
+  --border-light: #dde7f0;
+  --shadow-sm: 0 2px 6px rgba(40, 75, 110, 0.05);
+  --shadow-md: 0 8px 24px rgba(35, 70, 105, 0.08);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-  background-color: #f0f7fc;
-  color: #2c3e50;
-  line-height: 1.5;
-  padding: 24px 16px;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.6;
+  padding: 32px 16px;
   max-width: 860px;
   margin: 0 auto;
 }
 
+/* Cabeçalho */
 header {
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid #dbeafe;
-  box-shadow: 0 4px 12px rgba(186, 215, 242, 0.25);
+  background: var(--surface);
+  padding: 24px 28px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 24px;
 }
 
 header h1 {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #1e3a5f;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary-dark);
 }
 
 .turma-selector-area {
-  margin-top: 18px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .turma-selector-area label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #4b6584;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .turma-selector-area select {
-  padding: 8px 12px;
-  border: 1px solid #bfdbfe;
-  border-radius: 8px;
-  background-color: #f8fbff;
-  color: #1e3a5f;
-  font-size: 0.9rem;
+  padding: 9px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-alt);
+  color: var(--primary-dark);
+  font-size: 0.92rem;
+  font-weight: 500;
   outline: none;
-  transition: border-color 0.2s;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .turma-selector-area select:focus {
-  border-color: #60a5fa;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(123, 181, 232, 0.25);
 }
 
+/* Controlos de Visualização */
 .view-controls {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
+  display: inline-flex;
+  background: #e5edf5;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  gap: 4px;
+  margin-bottom: 24px;
 }
 
 .view-controls button {
   padding: 8px 18px;
-  border: 1px solid #bfdbfe;
-  background-color: #ffffff;
-  color: #3b82f6;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .view-controls button:hover {
-  background-color: #eff6ff;
+  color: var(--primary-dark);
 }
 
 .view-controls button.active {
-  background-color: #93c5fd;
-  color: #0f2d59;
-  border-color: #60a5fa;
-  font-weight: 600;
+  background: var(--surface);
+  color: var(--primary-dark);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
+/* Grade de Aulas */
 .aulas-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: 14px;
+  margin-bottom: 36px;
 }
 
 .card-aula {
-  background: #ffffff;
-  padding: 18px;
-  border-radius: 10px;
-  border: 1px solid #dbeafe;
-  box-shadow: 0 2px 6px rgba(186, 215, 242, 0.15);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background: var(--surface);
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light) !important;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  position: relative;
 }
 
 .card-aula:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(186, 215, 242, 0.3);
+  box-shadow: var(--shadow-md);
+  border-color: #c9dbed !important;
 }
 
 .card-aula.tag-atual {
-  border-left: 4px solid #38bdf8;
-  background-color: #f0f9ff;
+  border-left: 5px solid #38bdf8 !important;
+  background: #f6fbff;
 }
 
 .card-aula.tag-proxima {
-  border-left: 4px solid #818cf8;
-  background-color: #f5f7ff;
+  border-left: 5px solid #818cf8 !important;
+  background: #fafbff;
 }
 
 .card-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.85rem;
-  color: #64748b;
-  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
 }
 
 .card-aula h4 {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  color: #1e3a5f;
+  color: var(--primary-dark);
   margin-bottom: 4px;
 }
 
 .card-aula p {
-  color: #475569;
-  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-size: 0.92rem;
 }
 
 .btn-detalhes {
-  margin-top: 12px;
-  padding: 6px 12px;
-  background: #f0f7ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 6px;
+  margin-top: 14px;
+  display: inline-block;
+  padding: 7px 14px;
+  background: var(--primary-soft);
+  border: 1px solid #cce2f5;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #2563eb;
-  transition: background 0.15s;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #24588a;
+  transition: all 0.15s ease;
 }
 
 .btn-detalhes:hover {
-  background: #dbeafe;
+  background: #deeffa;
+  border-color: var(--primary-blue);
 }
 
+/* Modal de Sala */
 dialog#modal-sala {
   margin: auto;
-  border: 1px solid #bfdbfe;
-  border-radius: 12px;
-  box-shadow: 0 12px 30px rgba(30, 58, 95, 0.15);
-  padding: 24px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 28px;
   max-width: 440px;
   width: 90%;
-  background: #ffffff;
+  background: var(--surface);
 }
 
 dialog#modal-sala::backdrop {
-  background: rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(2px);
+  background: rgba(18, 30, 45, 0.4);
+  backdrop-filter: blur(3px);
 }
 
 dialog#modal-sala h3 {
-  margin-bottom: 14px;
-  color: #1e3a5f;
-  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--primary-dark);
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 dialog#modal-sala p {
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-  color: #334155;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+  color: var(--text-main);
 }
 
 #btn-fechar-modal {
-  margin-top: 14px;
-  padding: 8px 16px;
-  background: #e2e8f0;
-  color: #334155;
-  border: none;
-  border-radius: 6px;
+  margin-top: 18px;
+  padding: 9px 18px;
+  background: var(--surface-alt);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-weight: 500;
-  font-size: 0.85rem;
+  font-weight: 600;
+  font-size: 0.86rem;
+  transition: background 0.15s ease;
 }
 
 #btn-fechar-modal:hover {
-  background: #cbd5e1;
+  background: #e9eff5;
 }
 
+/* Secção Informativa do Rodapé */
 #secao-sobre {
-  background-color: #ffffff;
-  border: 1px solid #dbeafe;
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
 }
 
-#secao-sobre h2, #secao-sobre h3 {
-  color: #1e3a5f;
-  margin-top: 14px;
+#secao-sobre h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 12px;
+}
+
+#secao-sobre h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-top: 18px;
   margin-bottom: 8px;
 }
 
 #secao-sobre p, #secao-sobre li {
   font-size: 0.88rem;
-  color: #475569;
+  color: var(--text-muted);
 }
 
 #secao-sobre ul {
