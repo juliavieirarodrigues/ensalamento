@@ -8,10 +8,25 @@
 <body>
 
   <header>
-    <h1>Ensalamento Acadêmico</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 15px;">
+      <h1>Ensalamento Acadêmico</h1>
+      
+      <!-- Área de Autenticação Federada (RF-01 a RF-04) -->
+      <div id="auth-area">
+        <div id="auth-botoes">
+          <span>Entrar com: </span>
+          <button id="btn-login-google" type="button">Google</button>
+          <button id="btn-login-github" type="button">GitHub</button>
+        </div>
+        <div id="auth-usuario" style="display: none;">
+          <span id="user-info"></span>
+          <button id="btn-logout" type="button" style="margin-left: 10px;">Sair</button>
+        </div>
+      </div>
+    </div>
     
-    <!-- Seletor de Turma e Persistência Local (RF-05, RF-06) -->
-    <div class="turma-selector-area">
+    <!-- Seletor de Turma do Aluno (RF-05, RF-06) -->
+    <div id="turma-selector-area" class="turma-selector-area">
       <label for="select-turma">Selecione a sua Turma:</label>
       <select id="select-turma">
         <option value="ES-3A">Engenharia de Software - 3º Período (ES-3A)</option>
