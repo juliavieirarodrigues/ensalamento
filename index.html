@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Ensalamento Acadêmico</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -11,16 +12,20 @@
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 15px;">
       <h1>Ensalamento Acadêmico</h1>
       
-      <!-- Área de Autenticação Federada (RF-01 a RF-04) -->
+      <!-- Área de Autenticação Federada Real (RF-01 a RF-04) -->
       <div id="auth-area">
-        <div id="auth-botoes">
-          <span>Entrar com: </span>
-          <button id="btn-login-google" type="button">Google</button>
-          <button id="btn-login-github" type="button">GitHub</button>
+        <div id="g_id_onload"
+             data-client_id="845244519962-sample.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div id="auth-botoes" style="display: flex; gap: 8px; align-items: center;">
+          <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="medium"></div>
+          <button id="btn-login-demo" type="button" style="padding: 6px 12px; cursor: pointer; font-size: 12px; background: #eee; border: 1px solid #ccc; border-radius: 4px;">Acesso Avaliador (Prof. Frank)</button>
         </div>
         <div id="auth-usuario" style="display: none;">
-          <span id="user-info"></span>
-          <button id="btn-logout" type="button" style="margin-left: 10px;">Sair</button>
+          <span id="user-info" style="font-weight: bold;"></span>
+          <button id="btn-logout" type="button" style="margin-left: 10px; padding: 4px 8px; cursor: pointer;">Sair</button>
         </div>
       </div>
     </div>
@@ -30,8 +35,8 @@
       <label for="select-turma">Selecione a sua Turma:</label>
       <select id="select-turma">
         <option value="ES-3A">Engenharia de Software - 3º Período (ES-3A)</option>
-        <option value="ES-1A">Engenharia de Software - 1º Período (ES-1A)</option>
-        <option value="CC-3A">Ciência da Computação - 3º Período (CC-3A)</option>
+        <option value="CC-1A">Ciência da Computação - 1º Período (CC-1A)</option>
+        <option value="SI-2A">Sistemas de Informação - 2º Período (SI-2A)</option>
       </select>
     </div>
   </header>
