@@ -12,7 +12,22 @@
 </head>
 <body>
   <h1>Salas Disponíveis</h1>
+  <!-- Secção de Preferência de Turma (RF-05 e RF-06) -->
+<section id="area-aluno" style="margin-bottom: 20px;">
+  <label for="select-turma"><strong>Selecione a sua turma:</strong></label>
+  <select id="select-turma">
+    <option value="">A carregar turmas...</option>
+  </select>
+  <button id="btn-salvar-turma">Guardar Preferência</button>
+</section>
+
+<!-- Alternância entre Diário e Semanal (RF-37) -->
+<div style="margin-bottom: 15px;">
+  <button id="btn-visao-dia">Aulas de Hoje</button>
+  <button id="btn-visao-semana">Semana Completa</button>
+</div>
   <div id="lista-salas">A carregar salas...</div>
+  
 
   <script src="salas.js"></script>
 </body>
