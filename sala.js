@@ -69,7 +69,7 @@ if (btnSalvar) {
   });
 }
 
-// Dados simulados para desenvolvimento da interface (RF-35 a RF-39)[cite: 7]
+// Dados simulados para desenvolvimento da interface (RF-35 a RF-39)
 const aulasExemplo = [
   {
     id: 1,
@@ -127,9 +127,9 @@ const aulasExemplo = [
   }
 ];
 
-let modoVisualizacao = "hoje"; // "hoje" ou "semana"[cite: 7]
+let modoVisualizacao = "hoje"; // "hoje" ou "semana"
 
-// Função que calcula se a aula é atual ou a próxima (RF-35)[cite: 7]
+// Função que calcula se a aula é atual ou a próxima (RF-35)
 function calcularStatusHorario(horaInicio, horaFim, diaAula) {
   const agora = new Date();
   const diaHoje = agora.getDay();
@@ -151,7 +151,7 @@ function calcularStatusHorario(horaInicio, horaFim, diaAula) {
   return "";
 }
 
-// Renderiza os cartões de aula (RF-35 e RF-37)[cite: 7]
+// Renderiza os cartões de aula (RF-35 e RF-37)
 function renderizarAgenda() {
   const container = document.getElementById("container-aulas");
   if (!container) return;
@@ -202,7 +202,7 @@ function renderizarAgenda() {
   });
 }
 
-// Exibe modal com detalhes físicos e acessibilidade (RF-38 e RF-39)[cite: 7]
+// Exibe modal com detalhes físicos e acessibilidade (RF-38 e RF-39)
 function abrirDetalhesSala(aula) {
   const modal = document.getElementById("modal-sala");
   if (!modal) return;
@@ -217,6 +217,71 @@ function abrirDetalhesSala(aula) {
   modal.showModal();
 }
 
+// --- GESTÃO DE AUTENTICAÇÃO E PAPÉIS (RF-01 a RF-04, RF-36) ---
+
+const usuariosCadastrados = {
+  "frankalcantara@gmail.com": { nome: "Prof. Frank Alcantara", papel: "admin" },
+  "professor@exemplo.com": { nome: "Prof. Carlos Eduardo", papel: "professor" }
+};
+
+function aplicarLoginUsuario(email, nomeInformado) {
+  const dados = usuariosCadastrados[email.toLowerCase()];
+  let usuario;
+
+  if (dados) {
+    usuario = { email: email, nome: dados.nome, papel: dados.papel };
+  } else {
+    usuario = { email: email, nome: nomeInformado || email.split("@")[0], papel: "aluno" };
+  }
+
+  sessionStorage.setItem("usuario_autenticado", JSON.stringify(usuario));
+  checarSessaoUsuario();
+}
+
+// Callback oficial do Google Identity (decodifica o token JWT)
+function handleCredentialResponse(response) {
+  try {
+    const base64Url = response.credential.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    const payload = JSON.parse(jsonPayload);
+
+    aplicarLoginUsuario(payload.email, payload.name);
+  } catch (e) {
+    console.error("Erro ao decodificar token Google", e);
+  }
+}
+
+function checarSessaoUsuario() {
+  const usuarioLogado = JSON.parse(sessionStorage.getItem("usuario_autenticado"));
+  const authBotoes = document.getElementById("auth-botoes");
+  const authUsuario = document.getElementById("auth-usuario");
+  const userInfo = document.getElementById("user-info");
+  const seletorTurmaArea = document.getElementById("turma-selector-area");
+
+  if (usuarioLogado) {
+    if (authBotoes) authBotoes.style.display = "none";
+    if (authUsuario) authUsuario.style.display = "block";
+    if (userInfo) userInfo.textContent = `Olá, ${usuarioLogado.nome} (${usuarioLogado.papel.toUpperCase()})`;
+
+    // Se for Professor ou Admin (avaliador), oculta escolha de turma do aluno (RF-04 e RF-36)
+    if (usuarioLogado.papel === "professor" || usuarioLogado.papel === "admin") {
+      if (seletorTurmaArea) seletorTurmaArea.style.display = "none";
+    } else {
+      if (seletorTurmaArea) seletorTurmaArea.style.display = "block";
+    }
+  } else {
+    if (authBotoes) authBotoes.style.display = "flex";
+    if (authUsuario) authUsuario.style.display = "none";
+    if (seletorTurmaArea) seletorTurmaArea.style.display = "block";
+  }
+}
+
+function encerrarSessao() {
+  sessionStorage.removeItem("usuario_autenticado");
+  checarSessaoUsuario();
+}
+
 // Inicialização de eventos da página
 document.addEventListener("DOMContentLoaded", () => {
   carregarSalas();
@@ -226,6 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnSemana = document.getElementById("btn-semana");
   const btnFecharModal = document.getElementById("btn-fechar-modal");
   const modal = document.getElementById("modal-sala");
+  const btnDemo = document.getElementById("btn-login-demo");
+  const btnLogout = document.getElementById("btn-logout");
 
   if (btnHoje && btnSemana) {
     btnHoje.addEventListener("click", () => {
@@ -250,74 +317,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (btnDemo) {
+    btnDemo.addEventListener("click", () => {
+      aplicarLoginUsuario("frankalcantara@gmail.com", "Prof. Frank Alcantara");
+    });
+  }
+
+  if (btnLogout) {
+    btnLogout.addEventListener("click", encerrarSessao);
+  }
+
+  checarSessaoUsuario();
   renderizarAgenda();
-});
-// --- GESTÃO DE AUTENTICAÇÃO E PAPÉIS (RF-01 a RF-04, RF-36) ---
-
-// Base de e-mails pré-cadastrados (Secções 6.4.1 e 6.4.4 do edital)
-const usuariosCadastrados = {
-  "frankalcantara@gmail.com": { nome: "Prof. Frank Alcantara", papel: "admin" },
-  "professor@exemplo.com": { nome: "Prof. Carlos Eduardo", papel: "professor" }
-};
-
-function checarSessaoUsuario() {
-  const usuarioLogado = JSON.parse(sessionStorage.getItem("usuario_autenticado"));
-  const authBotoes = document.getElementById("auth-botoes");
-  const authUsuario = document.getElementById("auth-usuario");
-  const userInfo = document.getElementById("user-info");
-  const seletorTurmaArea = document.getElementById("turma-selector-area");
-
-  if (usuarioLogado) {
-    if (authBotoes) authBotoes.style.display = "none";
-    if (authUsuario) authUsuario.style.display = "block";
-    if (userInfo) userInfo.textContent = `Olá, ${usuarioLogado.nome} (${usuarioLogado.papel.toUpperCase()})`;
-
-    // Se for Professor ou Admin (avaliador), oculta escolha de turma do aluno (RF-04 e RF-36)
-    if (usuarioLogado.papel === "professor" || usuarioLogado.papel === "admin") {
-      if (seletorTurmaArea) seletorTurmaArea.style.display = "none";
-    } else {
-      if (seletorTurmaArea) seletorTurmaArea.style.display = "block";
-    }
-  } else {
-    if (authBotoes) authBotoes.style.display = "block";
-    if (authUsuario) authUsuario.style.display = "none";
-    if (seletorTurmaArea) seletorTurmaArea.style.display = "block";
-  }
-}
-
-function simularLoginFederado(provedor) {
-  const email = prompt(`Simulação de login com ${provedor}:\nDigite um e-mail de teste (ex: frankalcantara@gmail.com, professor@exemplo.com ou aluno@exemplo.com):`, "frankalcantara@gmail.com");
-  
-  if (!email) return;
-
-  const dadosPreCadastro = usuariosCadastrados[email.toLowerCase()];
-  let usuario;
-
-  if (dadosPreCadastro) {
-    usuario = { email: email, nome: dadosPreCadastro.nome, papel: dadosPreCadastro.papel };
-  } else {
-    // Caso padrão para qualquer outra conta: tratado como Aluno (RF-04)
-    usuario = { email: email, nome: email.split("@")[0], papel: "aluno" };
-  }
-
-  sessionStorage.setItem("usuario_autenticado", JSON.stringify(usuario));
-  checarSessaoUsuario();
-}
-
-function encerrarSessao() {
-  sessionStorage.removeItem("usuario_autenticado");
-  checarSessaoUsuario();
-}
-
-// Vincula os botões de autenticação
-window.addEventListener("DOMContentLoaded", () => {
-  const btnGoogle = document.getElementById("btn-login-google");
-  const btnGithub = document.getElementById("btn-login-github");
-  const btnLogout = document.getElementById("btn-logout");
-
-  if (btnGoogle) btnGoogle.addEventListener("click", () => simularLoginFederado("Google"));
-  if (btnGithub) btnGithub.addEventListener("click", () => simularLoginFederado("GitHub"));
-  if (btnLogout) btnLogout.addEventListener("click", encerrarSessao);
-
-  checarSessaoUsuario();
 });
