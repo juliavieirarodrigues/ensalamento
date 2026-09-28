@@ -29,3 +29,45 @@ async function carregarSalas() {
 }
 
 document.addEventListener('DOMContentLoaded', carregarSalas);
+
+//  LÓGICA DE PREFERÊNCIA DO ALUNO (RF-05 E RF-06)
+
+const selectTurma = document.getElementById('select-turma');
+const btnSalvar = document.getElementById('btn-salvar-turma');
+
+function carregarOpcoesTurmas() {
+  const turmasExemplo = [
+    'Engenharia de Software - 3º Período',
+    'Ciência da Computação - 1º Período',
+    'Sistemas de Informação - 2º Período'
+  ];
+  
+  if (!selectTurma) return;
+  selectTurma.innerHTML = '<option value="">-- Escolha uma turma --</option>';
+  
+  turmasExemplo.forEach(turma => {
+    const opt = document.createElement('option');
+    opt.value = turma;
+    opt.textContent = turma;
+    selectTurma.appendChild(opt);
+  });
+
+  const turmaSalva = localStorage.getItem('turma_preferida');
+  if (turmaSalva) {
+    selectTurma.value = turmaSalva;
+  }
+}
+
+if (btnSalvar) {
+  btnSalvar.addEventListener('click', () => {
+    const escolha = selectTurma.value;
+    if (!escolha) {
+      alert('Por favor, selecione uma turma!');
+      return;
+    }
+    localStorage.setItem('turma_preferida', escolha);
+    alert('Turma guardada com sucesso: ' + escolha);
+  });
+}
+
+carregarOpcoesTurmas();
