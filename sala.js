@@ -252,3 +252,72 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderizarAgenda();
 });
+// --- GESTÃO DE AUTENTICAÇÃO E PAPÉIS (RF-01 a RF-04, RF-36) ---
+
+// Base de e-mails pré-cadastrados (Secções 6.4.1 e 6.4.4 do edital)
+const usuariosCadastrados = {
+  "frankalcantara@gmail.com": { nome: "Prof. Frank Alcantara", papel: "admin" },
+  "professor@exemplo.com": { nome: "Prof. Carlos Eduardo", papel: "professor" }
+};
+
+function checarSessaoUsuario() {
+  const usuarioLogado = JSON.parse(sessionStorage.getItem("usuario_autenticado"));
+  const authBotoes = document.getElementById("auth-botoes");
+  const authUsuario = document.getElementById("auth-usuario");
+  const userInfo = document.getElementById("user-info");
+  const seletorTurmaArea = document.getElementById("turma-selector-area");
+
+  if (usuarioLogado) {
+    if (authBotoes) authBotoes.style.display = "none";
+    if (authUsuario) authUsuario.style.display = "block";
+    if (userInfo) userInfo.textContent = `Olá, ${usuarioLogado.nome} (${usuarioLogado.papel.toUpperCase()})`;
+
+    // Se for Professor ou Admin (avaliador), oculta escolha de turma do aluno (RF-04 e RF-36)
+    if (usuarioLogado.papel === "professor" || usuarioLogado.papel === "admin") {
+      if (seletorTurmaArea) seletorTurmaArea.style.display = "none";
+    } else {
+      if (seletorTurmaArea) seletorTurmaArea.style.display = "block";
+    }
+  } else {
+    if (authBotoes) authBotoes.style.display = "block";
+    if (authUsuario) authUsuario.style.display = "none";
+    if (seletorTurmaArea) seletorTurmaArea.style.display = "block";
+  }
+}
+
+function simularLoginFederado(provedor) {
+  const email = prompt(`Simulação de login com ${provedor}:\nDigite um e-mail de teste (ex: frankalcantara@gmail.com, professor@exemplo.com ou aluno@exemplo.com):`, "frankalcantara@gmail.com");
+  
+  if (!email) return;
+
+  const dadosPreCadastro = usuariosCadastrados[email.toLowerCase()];
+  let usuario;
+
+  if (dadosPreCadastro) {
+    usuario = { email: email, nome: dadosPreCadastro.nome, papel: dadosPreCadastro.papel };
+  } else {
+    // Caso padrão para qualquer outra conta: tratado como Aluno (RF-04)
+    usuario = { email: email, nome: email.split("@")[0], papel: "aluno" };
+  }
+
+  sessionStorage.setItem("usuario_autenticado", JSON.stringify(usuario));
+  checarSessaoUsuario();
+}
+
+function encerrarSessao() {
+  sessionStorage.removeItem("usuario_autenticado");
+  checarSessaoUsuario();
+}
+
+// Vincula os botões de autenticação
+window.addEventListener("DOMContentLoaded", () => {
+  const btnGoogle = document.getElementById("btn-login-google");
+  const btnGithub = document.getElementById("btn-login-github");
+  const btnLogout = document.getElementById("btn-logout");
+
+  if (btnGoogle) btnGoogle.addEventListener("click", () => simularLoginFederado("Google"));
+  if (btnGithub) btnGithub.addEventListener("click", () => simularLoginFederado("GitHub"));
+  if (btnLogout) btnLogout.addEventListener("click", encerrarSessao);
+
+  checarSessaoUsuario();
+});
