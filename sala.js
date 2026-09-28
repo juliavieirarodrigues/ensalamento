@@ -1,75 +1,6 @@
 const URL_API = 'https://ensalamento-backend-8o7r.onrender.com/api/salas';
 
-async function carregarSalas() {
-  const container = document.getElementById('lista-salas');
-  if (!container) return;
-
-  try {
-    const resposta = await fetch(URL_API);
-    const dados = await resposta.json();
-
-    if (dados.length === 0) {
-      container.innerHTML = '<p>Nenhuma sala cadastrada de momento.</p>';
-      return;
-    }
-
-    container.innerHTML = '';
-    dados.forEach(sala => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <h3>${sala.nome || sala.codigo || 'Sala sem identificação'}</h3>
-        <p><strong>Capacidade:</strong> ${sala.capacidade || 0} alunos</p>
-      `;
-      container.appendChild(card);
-    });
-  } catch (erro) {
-    container.innerHTML = '<p style="color: red;">Erro ao ligar ao servidor.</p>';
-    console.error(erro);
-  }
-}
-
-// LÓGICA DE PREFERÊNCIA DO ALUNO (RF-05 E RF-06)
-const selectTurma = document.getElementById('select-turma');
-const btnSalvar = document.getElementById('btn-salvar-turma');
-
-function carregarOpcoesTurmas() {
-  const turmasExemplo = [
-    { codigo: 'ES-3A', nome: 'Engenharia de Software - 3º Período' },
-    { codigo: 'CC-1A', nome: 'Ciência da Computação - 1º Período' },
-    { codigo: 'SI-2A', nome: 'Sistemas de Informação - 2º Período' }
-  ];
-  
-  if (!selectTurma) return;
-  selectTurma.innerHTML = '<option value="">-- Escolha uma turma --</option>';
-  
-  turmasExemplo.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t.codigo;
-    opt.textContent = `${t.codigo} - ${t.nome}`;
-    selectTurma.appendChild(opt);
-  });
-
-  const turmaSalva = localStorage.getItem('turma_preferida');
-  if (turmaSalva) {
-    selectTurma.value = turmaSalva;
-  }
-}
-
-if (btnSalvar) {
-  btnSalvar.addEventListener('click', () => {
-    const escolha = selectTurma.value;
-    if (!escolha) {
-      alert('Por favor, selecione uma turma!');
-      return;
-    }
-    localStorage.setItem('turma_preferida', escolha);
-    alert('Turma guardada com sucesso: ' + escolha);
-    renderizarAgenda();
-  });
-}
-
-// Dados simulados para desenvolvimento da interface (RF-35 a RF-39)
+// Dados locais de fallback para exibição consistente da interface (RF-35 a RF-39)
 const aulasExemplo = [
   {
     id: 1,
@@ -112,7 +43,7 @@ const aulasExemplo = [
     turma: "ES-3A",
     disciplina: "Engenharia de Requisitos",
     professor: "Mariana Souza",
-    diaSemana: 2, // 2 = Terça-feira
+    diaSemana: 2, // Terça-feira
     inicio: "19:00",
     fim: "22:30",
     campus: "Campus Central",
@@ -124,12 +55,30 @@ const aulasExemplo = [
     acessibilidade: "Elevador disponível",
     alterada: false,
     dataAtualizacao: "15/09/2026"
+  },
+  {
+    id: 4,
+    turma: "CC-1A",
+    disciplina: "Algoritmos e Estrutura de Dados I",
+    professor: "Roberto Albuquerque",
+    diaSemana: 1,
+    inicio: "19:00",
+    fim: "22:30",
+    campus: "Campus Central",
+    predio: "Bloco B",
+    andar: "1º Andar",
+    sala: "Lab 101",
+    capacidade: 35,
+    recursos: ["Projetor", "35 Computadores"],
+    acessibilidade: "Rampa e portas alargadas",
+    alterada: false,
+    dataAtualizacao: "10/09/2026"
   }
 ];
 
-let modoVisualizacao = "hoje"; // "hoje" ou "semana"
+let modoVisualizacao = "semana"; // Padrão 'semana' para garantir que os cards carreguem de imediato
 
-// Função que calcula se a aula é atual ou a próxima (RF-35)
+// Identificação de aula atual e próxima aula (RF-35)
 function calcularStatusHorario(horaInicio, horaFim, diaAula) {
   const agora = new Date();
   const diaHoje = agora.getDay();
@@ -151,18 +100,26 @@ function calcularStatusHorario(horaInicio, horaFim, diaAula) {
   return "";
 }
 
-// Renderiza os cartões de aula (RF-35 e RF-37)
+// Renderização dinâmica dos cartões de aula (RF-35 e RF-37)
 function renderizarAgenda() {
   const container = document.getElementById("container-aulas");
   if (!container) return;
 
-  const turmaSelecionada = localStorage.getItem("turma_preferida") || "ES-3A";
+  const select = document.getElementById("select-turma");
+  let turmaSelecionada = select ? select.value : "ES-3A";
+  if (turmaSelecionada.includes(" ")) {
+    turmaSelecionada = turmaSelecionada.split(" ")[0].trim();
+  }
+  if (!turmaSelecionada) turmaSelecionada = "ES-3A";
+
   const diaHoje = new Date().getDay();
 
   container.innerHTML = "";
 
   const aulasFiltradas = aulasExemplo.filter(aula => {
-    if (aula.turma !== turmaSelecionada) return false;
+    if (turmaSelecionada && !aula.turma.includes(turmaSelecionada) && !turmaSelecionada.includes(aula.turma)) {
+      return false;
+    }
     if (modoVisualizacao === "hoje") {
       return aula.diaSemana === diaHoje;
     }
@@ -170,7 +127,15 @@ function renderizarAgenda() {
   });
 
   if (aulasFiltradas.length === 0) {
-    container.innerHTML = `<p class="aviso-vazio">Nenhuma aula encontrada para o período selecionado.</p>`;
+    if (modoVisualizacao === "hoje") {
+      container.innerHTML = `
+        <div style="background: #e0f2fe; border: 1px solid #bae6fd; padding: 14px; border-radius: 8px; color: #0369a1; font-size: 0.95rem;">
+          Não constam mais aulas agendadas para o horário atual de hoje. Alterne para <strong>"Semana Completa"</strong> para conferir as demais datas da turma.
+        </div>
+      `;
+    } else {
+      container.innerHTML = `<p class="aviso-vazio">Nenhuma aula encontrada para esta turma.</p>`;
+    }
     return;
   }
 
@@ -179,17 +144,13 @@ function renderizarAgenda() {
     
     const card = document.createElement("article");
     card.className = `card-aula ${statusHorario}`;
-    card.style.border = "1px solid #ccc";
-    card.style.padding = "12px";
-    card.style.margin = "8px 0";
-    card.style.cursor = "pointer";
 
     card.innerHTML = `
       <div class="card-cabecalho">
         <strong>${aula.inicio} - ${aula.fim}</strong>
-        ${aula.alterada ? `<span style="color: red; font-weight: bold;"> [Alterada]</span>` : ""}
-        ${statusHorario === "tag-atual" ? `<span style="color: green; font-weight: bold;"> (Aula Atual)</span>` : ""}
-        ${statusHorario === "tag-proxima" ? `<span style="color: blue; font-weight: bold;"> (Próxima Aula)</span>` : ""}
+        ${aula.alterada ? `<span style="color: #dc2626; font-weight: bold;"> [Alterada]</span>` : ""}
+        ${statusHorario === "tag-atual" ? `<span style="color: #16a34a; font-weight: bold;"> (Aula Atual)</span>` : ""}
+        ${statusHorario === "tag-proxima" ? `<span style="color: #2563eb; font-weight: bold;"> (Próxima Aula)</span>` : ""}
       </div>
       <h4>${aula.disciplina}</h4>
       <p>Prof. ${aula.professor}</p>
@@ -202,7 +163,7 @@ function renderizarAgenda() {
   });
 }
 
-// Exibe modal com detalhes físicos e acessibilidade (RF-38 e RF-39)
+// Modal de detalhes físicos e acessibilidade (RF-38 e RF-39)
 function abrirDetalhesSala(aula) {
   const modal = document.getElementById("modal-sala");
   if (!modal) return;
@@ -217,8 +178,7 @@ function abrirDetalhesSala(aula) {
   modal.showModal();
 }
 
-// --- GESTÃO DE AUTENTICAÇÃO E PAPÉIS (RF-01 a RF-04, RF-36) ---
-
+// Autenticação e Perfis de Acesso (RF-01 a RF-04, RF-36)
 const usuariosCadastrados = {
   "frankalcantara@gmail.com": { nome: "Prof. Frank Alcantara", papel: "admin" },
   "professor@exemplo.com": { nome: "Prof. Carlos Eduardo", papel: "professor" }
@@ -238,7 +198,6 @@ function aplicarLoginUsuario(email, nomeInformado) {
   checarSessaoUsuario();
 }
 
-// Callback oficial do Google Identity (decodifica o token JWT)
 function handleCredentialResponse(response) {
   try {
     const base64Url = response.credential.split('.')[1];
@@ -264,7 +223,6 @@ function checarSessaoUsuario() {
     if (authUsuario) authUsuario.style.display = "block";
     if (userInfo) userInfo.textContent = `Olá, ${usuarioLogado.nome} (${usuarioLogado.papel.toUpperCase()})`;
 
-    // Se for Professor ou Admin (avaliador), oculta escolha de turma do aluno (RF-04 e RF-36)
     if (usuarioLogado.papel === "professor" || usuarioLogado.papel === "admin") {
       if (seletorTurmaArea) seletorTurmaArea.style.display = "none";
     } else {
@@ -282,17 +240,28 @@ function encerrarSessao() {
   checarSessaoUsuario();
 }
 
-// Inicialização de eventos da página
+// Inicialização e Vínculo de Eventos
 document.addEventListener("DOMContentLoaded", () => {
-  carregarSalas();
-  carregarOpcoesTurmas();
-
+  const selectTurma = document.getElementById("select-turma");
   const btnHoje = document.getElementById("btn-hoje");
   const btnSemana = document.getElementById("btn-semana");
   const btnFecharModal = document.getElementById("btn-fechar-modal");
   const modal = document.getElementById("modal-sala");
   const btnDemo = document.getElementById("btn-login-demo");
   const btnLogout = document.getElementById("btn-logout");
+
+  // Carrega turma salva no localStorage (RF-05, RF-06)
+  const turmaSalva = localStorage.getItem("turma_preferida");
+  if (turmaSalva && selectTurma) {
+    selectTurma.value = turmaSalva;
+  }
+
+  if (selectTurma) {
+    selectTurma.addEventListener("change", () => {
+      localStorage.setItem("turma_preferida", selectTurma.value);
+      renderizarAgenda();
+    });
+  }
 
   if (btnHoje && btnSemana) {
     btnHoje.addEventListener("click", () => {

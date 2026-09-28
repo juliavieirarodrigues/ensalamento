@@ -4,15 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Ensalamento Acadêmico</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
   <header>
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 15px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dbeafe; padding-bottom: 12px; margin-bottom: 15px;">
       <h1>Ensalamento Acadêmico</h1>
       
-      <!-- Área de Autenticação Federada Real (RF-01 a RF-04) -->
+      <!-- Autenticação Federada e Identificação (RF-01 a RF-04) -->
       <div id="auth-area">
         <div id="g_id_onload"
              data-client_id="845244519962-sample.apps.googleusercontent.com"
@@ -21,38 +22,38 @@
         </div>
         <div id="auth-botoes" style="display: flex; gap: 8px; align-items: center;">
           <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="medium"></div>
-          <button id="btn-login-demo" type="button" style="padding: 6px 12px; cursor: pointer; font-size: 12px; background: #eee; border: 1px solid #ccc; border-radius: 4px;">Acesso Avaliador (Prof. Frank)</button>
+          <button id="btn-login-demo" type="button" style="padding: 6px 12px; cursor: pointer; font-size: 12px; background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 6px;">Acesso Avaliador (Prof. Frank)</button>
         </div>
         <div id="auth-usuario" style="display: none;">
-          <span id="user-info" style="font-weight: bold;"></span>
-          <button id="btn-logout" type="button" style="margin-left: 10px; padding: 4px 8px; cursor: pointer;">Sair</button>
+          <span id="user-info" style="font-weight: bold; color: #1e3a5f;"></span>
+          <button id="btn-logout" type="button" style="margin-left: 10px; padding: 4px 8px; cursor: pointer; border-radius: 4px; border: 1px solid #cbd5e1;">Sair</button>
         </div>
       </div>
     </div>
     
-    <!-- Seletor de Turma do Aluno (RF-05, RF-06) -->
+    <!-- Seletor de Turma do Aluno com Persistência (RF-05, RF-06) -->
     <div id="turma-selector-area" class="turma-selector-area">
       <label for="select-turma">Selecione a sua Turma:</label>
       <select id="select-turma">
-        <option value="ES-3A">Engenharia de Software - 3º Período (ES-3A)</option>
-        <option value="CC-1A">Ciência da Computação - 1º Período (CC-1A)</option>
-        <option value="SI-2A">Sistemas de Informação - 2º Período (SI-2A)</option>
+        <option value="ES-3A">ES-3A - Engenharia de Software - 3º Período</option>
+        <option value="CC-1A">CC-1A - Ciência da Computação - 1º Período</option>
+        <option value="SI-2A">SI-2A - Sistemas de Informação - 2º Período</option>
       </select>
     </div>
   </header>
 
   <!-- Filtros de Visualização (RF-35 e RF-37) -->
   <section class="view-controls">
-    <button id="btn-hoje" type="button" class="active">Aulas de Hoje</button>
-    <button id="btn-semana" type="button">Semana Completa</button>
+    <button id="btn-hoje" type="button">Aulas de Hoje</button>
+    <button id="btn-semana" type="button" class="active">Semana Completa</button>
   </section>
 
-  <!-- Contentor onde as aulas são injetadas pelo sala.js -->
+  <!-- Grade de Aulas (RF-35 a RF-37) -->
   <main id="container-aulas" class="aulas-grid">
-    <!-- Os cartões de aula serão gerados automaticamente -->
+    <!-- Cartões gerados dinamicamente via sala.js -->
   </main>
 
-  <!-- Modal de Detalhes da Sala (RF-38 e RF-39) -->
+  <!-- Modal de Detalhes da Sala e Acessibilidade (RF-38 e RF-39) -->
   <dialog id="modal-sala">
     <div class="modal-content">
       <h3 id="modal-titulo-sala">Detalhes da Sala</h3>
@@ -61,24 +62,22 @@
       <p><strong>Capacidade:</strong> <span id="modal-capacidade"></span> lugares</p>
       <p><strong>Recursos:</strong> <span id="modal-recursos"></span></p>
       <p><strong>Acessibilidade:</strong> <span id="modal-acessibilidade"></span></p>
-      <br>
       <button id="btn-fechar-modal" type="button">Fechar</button>
     </div>
   </dialog>
-  <hr>
-  <!-- Secção Sobre o Projeto (Exigência Seção 5.4 da Rubrica) -->
-  <footer id="secao-sobre" style="margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-top: 1px solid #ddd;">
+
+  <!-- Seção Sobre o Projeto (Exigência Seção 5.4 da Rubrica) -->
+  <footer id="secao-sobre">
     <h2>Sobre o Projeto</h2>
-    
     <p><strong>Instituição:</strong> UniBrasil Centro Universitário</p>
     <p><strong>Disciplina:</strong> Prática Profissional em Desenvolvimento Web (2026)</p>
     <p><strong>Docente:</strong> Prof. Frank Alcantara</p>
-    <p><strong>Nota Acadêmica:</strong> Este é um trabalho estritamente académico e de demonstração prática, não constituindo publicação ou comunicação institucional oficial.</p>
+    <p><strong>Nota Acadêmica:</strong> Este sítio é um trabalho estritamente académico e de demonstração prática, não constituindo publicação ou comunicação institucional oficial.</p>
 
     <h3>Equipe e Atribuições</h3>
     <ul>
-      <li><strong>Eduarda Nozykowski | 2025207350 :</strong> Desenvolvimento do Front-end (HTML5/CSS3/JavaScript puro), persistência de preferências de utilizador via <code>localStorage</code>, visões de consulta diária/semanal e interface responsiva acessível.</li>
-      <li><strong>Julia Camilly Vieira Rodrigues | 2025207304 :</strong> Arquitetura de infraestrutura, modelagem do banco de dados relacional (PostgreSQL via Supabase), contentorização Docker em PaaS (Render) e implementação do núcleo de alocação em C/C++.</li>
+      <li><strong>Eduarda Nozykowski | 2025207350:</strong> Desenvolvimento do Front-end (HTML5/CSS3/JavaScript puro), persistência de preferências de utilizador via <code>localStorage</code>, visões de consulta diária/semanal e interface responsiva acessível.</li>
+      <li><strong>Julia Camilly Vieira Rodrigues | 2025207304:</strong> Arquitetura de infraestrutura, modelagem do banco de dados relacional (PostgreSQL via Supabase), contentorização Docker em PaaS (Render) e implementação do núcleo de alocação em C/C++.</li>
     </ul>
 
     <h3>Objetivos do Sistema</h3>
@@ -92,7 +91,6 @@
     <p>O algoritmo e os critérios de distribuição priorizam de forma estrita e obrigatória o atendimento a parâmetros de acessibilidade física antes de qualquer métrica de conveniência. Limitações actuais incluem a ausência de mapeamento geográfico interno por GPS e a dependência de cadastro fidedigno das coordenações.</p>
   </footer>
 
-  <!-- Ligação com o ficheiro JavaScript da aplicação -->
   <script src="sala.js"></script>
 </body>
 </html>
