@@ -3,6 +3,8 @@ const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
+const { executarAlocacao } = require('./heuristica');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -54,6 +56,24 @@ app.post('/api/salas', async (req, res) => {
 
     if (error) return res.status(400).json({ error: error.message });
     return res.status(201).json(data[0]);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/ensalamento/gerar', async (req, res) => {
+  try {
+    const { data: salas, error: errSalas } = await supabase.from('salas').select('*');
+    const { data: turmas, error: errTurmas } = await supabase.from('turmas').select('*');
+    const { data: encontros, error: errEncontros } = await supabase.from('encontros').select('*');
+
+    if (errSalas || errTurmas || errEncontros) {
+      return res.status(400).json({ error: 'Erro ao buscar dados do banco de dados' });
+    }
+
+    const resultado = executarAlocacao(turmas, encontros, salas);
+
+    return res.json(resultado);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
