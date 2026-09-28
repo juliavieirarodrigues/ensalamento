@@ -3,32 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Ensalamento - Salas</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 24px; background-color: #f7f9fa; }
-    h1 { color: #333; }
-    .card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 12px; max-width: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-  </style>
+  <title>Sistema de Ensalamento Acadêmico</title>
 </head>
 <body>
-  <h1>Salas Disponíveis</h1>
-  <!-- Secção de Preferência de Turma (RF-05 e RF-06) -->
-<section id="area-aluno" style="margin-bottom: 20px;">
-  <label for="select-turma"><strong>Selecione a sua turma:</strong></label>
-  <select id="select-turma">
-    <option value="">A carregar turmas...</option>
-  </select>
-  <button id="btn-salvar-turma">Guardar Preferência</button>
-</section>
 
-<!-- Alternância entre Diário e Semanal (RF-37) -->
-<div style="margin-bottom: 15px;">
-  <button id="btn-visao-dia">Aulas de Hoje</button>
-  <button id="btn-visao-semana">Semana Completa</button>
-</div>
-  <div id="lista-salas">A carregar salas...</div>
-  
+  <header>
+    <h1>Ensalamento Acadêmico</h1>
+    
+    <!-- Seletor de Turma e Persistência Local (RF-05, RF-06) -->
+    <div class="turma-selector-area">
+      <label for="select-turma">Selecione a sua Turma:</label>
+      <select id="select-turma">
+        <option value="ES-3A">Engenharia de Software - 3º Período (ES-3A)</option>
+        <option value="ES-1A">Engenharia de Software - 1º Período (ES-1A)</option>
+        <option value="CC-3A">Ciência da Computação - 3º Período (CC-3A)</option>
+      </select>
+    </div>
+  </header>
 
+  <!-- Filtros de Visualização (RF-35 e RF-37) -->
+  <section class="view-controls">
+    <button id="btn-hoje" type="button" class="active">Aulas de Hoje</button>
+    <button id="btn-semana" type="button">Semana Completa</button>
+  </section>
+
+  <!-- Contentor onde as aulas são injetadas pelo sala.js -->
+  <main id="container-aulas" class="aulas-grid">
+    <!-- Os cartões de aula serão gerados automaticamente -->
+  </main>
+
+  <!-- Modal de Detalhes da Sala (RF-38 e RF-39) -->
+  <dialog id="modal-sala">
+    <div class="modal-content">
+      <h3 id="modal-titulo-sala">Detalhes da Sala</h3>
+      <p><strong>Campus/Prédio:</strong> <span id="modal-predio"></span></p>
+      <p><strong>Andar/Bloco:</strong> <span id="modal-andar"></span></p>
+      <p><strong>Capacidade:</strong> <span id="modal-capacidade"></span> lugares</p>
+      <p><strong>Recursos:</strong> <span id="modal-recursos"></span></p>
+      <p><strong>Acessibilidade:</strong> <span id="modal-acessibilidade"></span></p>
+      <br>
+      <button id="btn-fechar-modal" type="button">Fechar</button>
+    </div>
+  </dialog>
+
+  <!-- Ligação com o ficheiro JavaScript da aplicação -->
   <script src="sala.js"></script>
 </body>
 </html>
